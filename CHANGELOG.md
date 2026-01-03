@@ -1,3 +1,7 @@
+## 1.0.1
+
+* `RoleFocusNode` class added: FocusNode with a stable role identifier preserved in release builds.
+
 ## 1.0.0
 
 * **Complete package implementation** with comprehensive features

@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:s_offstage/s_offstage.dart';
 
+///****** FocusNode with a stable role identifier preserved in release builds. *****/
+
+/// FocusNode with a stable role identifier preserved in release builds.
+class RoleFocusNode extends FocusNode {
+  final String role;
+  RoleFocusNode(this.role, {super.skipTraversal}) : super(debugLabel: role);
+}
+
 ///********************** INTENTS DEFINITIONS **************************
 /// Basic Navigation and System Intents
 /// These are simple classes that represent the abstract actions we want to perform.
