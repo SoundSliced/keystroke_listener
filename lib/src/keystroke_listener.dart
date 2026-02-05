@@ -207,7 +207,6 @@ class _KeystrokeListenerState extends State<KeystrokeListener> {
       _ownsFocusNode = true;
     }
 
-    _focusNode!.onKeyEvent = _handleKeyEvent;
     _focusNode!.addListener(_handleFocusChange);
   }
 
@@ -227,6 +226,7 @@ class _KeystrokeListenerState extends State<KeystrokeListener> {
       if (isMetaPressed) modifiers += 'Cmd+';
       if (isShiftPressed) modifiers += 'Shift+';
 
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: Text('Pressed: $modifiers${event.logicalKey.keyLabel}')),
@@ -234,7 +234,9 @@ class _KeystrokeListenerState extends State<KeystrokeListener> {
     }
 
     widget.onKeyEvent?.call(event);
-    return KeyEventResult.handled;
+    // Return ignored so that the event continues to propagate (bubbling)
+    // and can trigger Shortcuts defined in the Actions/Shortcuts widgets.
+    return KeyEventResult.ignored;
   }
 
   void _handleFocusChange() {
@@ -271,64 +273,7 @@ class _KeystrokeListenerState extends State<KeystrokeListener> {
 
   @override
   Widget build(BuildContext context) {
-    return FocusableActionDetector(
-      autofocus: widget.autoFocus,
-      focusNode: _effectiveFocusNode,
-      shortcuts: <LogicalKeySet, Intent>{
-        // Navigation intents
-        LogicalKeySet(LogicalKeyboardKey.arrowUp): NavigateUpIntent(),
-        LogicalKeySet(LogicalKeyboardKey.arrowDown): NavigateDownIntent(),
-        LogicalKeySet(LogicalKeyboardKey.arrowLeft): NavigateLeftIntent(),
-        LogicalKeySet(LogicalKeyboardKey.arrowRight): NavigateRightIntent(),
-
-        // System intents
-        LogicalKeySet(LogicalKeyboardKey.escape): EscapeIntent(),
-        LogicalKeySet(LogicalKeyboardKey.enter): SubmitIntent(),
-        LogicalKeySet(LogicalKeyboardKey.backspace): DeleteIntent(),
-        LogicalKeySet(LogicalKeyboardKey.space): SpaceIntent(),
-
-        // Tab intents
-        LogicalKeySet(LogicalKeyboardKey.tab): TabIntent(),
-        LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.tab):
-            ReverseTabIntent(),
-
-        // Edit intents (Ctrl/Cmd + key)
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyS):
-            SaveIntent(),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyZ):
-            UndoIntent(),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyY):
-            RedoIntent(),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyA):
-            SelectAllIntent(),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyC):
-            CopyIntent(),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyV):
-            PasteIntent(),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyX):
-            CutIntent(),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.slash):
-            ToggleCommentIntent(),
-
-        // Meta (Cmd on Mac) variants for macOS
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyS):
-            SaveIntent(),
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyZ):
-            UndoIntent(),
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyY):
-            RedoIntent(),
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyA):
-            SelectAllIntent(),
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyC):
-            CopyIntent(),
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyV):
-            PasteIntent(),
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyX):
-            CutIntent(),
-
-        // Function keys
-        LogicalKeySet(LogicalKeyboardKey.f1): HelpIntent(),
-      },
+    return Actions(
       actions: <Type, Action<Intent>>{
         EscapeIntent:
             CallbackAction(onInvoke: (_) => debugPrint('ESC Action invoked!')),
@@ -369,32 +314,94 @@ class _KeystrokeListenerState extends State<KeystrokeListener> {
         SpaceIntent: CallbackAction(
             onInvoke: (_) => debugPrint('Space Action invoked!')),
       },
-      child: Material(
-        type: MaterialType.transparency,
-        child: Stack(
-          children: [
-            SOffstage(
-              isOffstage: true,
-              showLoadingIndicator: false,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.red, width: 2),
-                ),
-                padding: const EdgeInsets.all(4),
-                child: TextField(
-                  autofocus: widget.requestFocusOnInit,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.all(0),
+      child: Shortcuts(
+        shortcuts: <LogicalKeySet, Intent>{
+          // Navigation intents
+          LogicalKeySet(LogicalKeyboardKey.arrowUp): NavigateUpIntent(),
+          LogicalKeySet(LogicalKeyboardKey.arrowDown): NavigateDownIntent(),
+          LogicalKeySet(LogicalKeyboardKey.arrowLeft): NavigateLeftIntent(),
+          LogicalKeySet(LogicalKeyboardKey.arrowRight): NavigateRightIntent(),
+
+          // System intents
+          LogicalKeySet(LogicalKeyboardKey.escape): EscapeIntent(),
+          LogicalKeySet(LogicalKeyboardKey.enter): SubmitIntent(),
+          LogicalKeySet(LogicalKeyboardKey.backspace): DeleteIntent(),
+          LogicalKeySet(LogicalKeyboardKey.space): SpaceIntent(),
+
+          // Tab intents
+          LogicalKeySet(LogicalKeyboardKey.tab): TabIntent(),
+          LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.tab):
+              ReverseTabIntent(),
+
+          // Edit intents (Ctrl/Cmd + key)
+          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyS):
+              SaveIntent(),
+          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyZ):
+              UndoIntent(),
+          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyY):
+              RedoIntent(),
+          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyA):
+              SelectAllIntent(),
+          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyC):
+              CopyIntent(),
+          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyV):
+              PasteIntent(),
+          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyX):
+              CutIntent(),
+          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.slash):
+              ToggleCommentIntent(),
+
+          // Meta (Cmd on Mac) variants for macOS
+          LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyS):
+              SaveIntent(),
+          LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyZ):
+              UndoIntent(),
+          LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyY):
+              RedoIntent(),
+          LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyA):
+              SelectAllIntent(),
+          LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyC):
+              CopyIntent(),
+          LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyV):
+              PasteIntent(),
+          LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyX):
+              CutIntent(),
+
+          // Function keys
+          LogicalKeySet(LogicalKeyboardKey.f1): HelpIntent(),
+        },
+        child: Focus(
+          focusNode: _effectiveFocusNode,
+          autofocus: widget.autoFocus,
+          onKeyEvent: _handleKeyEvent,
+          child: Material(
+            type: MaterialType.transparency,
+            child: Stack(
+              children: [
+                SOffstage(
+                  isOffstage: true,
+                  showLoadingIndicator: false,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.red, width: 2),
+                    ),
+                    padding: const EdgeInsets.all(4),
+                    child: TextField(
+                      autofocus: widget.requestFocusOnInit,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.all(0),
+                      ),
+                      style: TextStyle(fontSize: 12),
+                      maxLines: 1,
+                    ),
                   ),
-                  style: TextStyle(fontSize: 12),
-                  maxLines: 1,
                 ),
-              ),
+                widget.child,
+              ],
             ),
-            widget.child,
-          ],
+          ),
         ),
       ),
     );

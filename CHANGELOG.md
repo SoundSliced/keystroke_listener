@@ -1,3 +1,15 @@
+## 1.1.0
+
+* KeystrokeListener now maintains keyboard event detection even when child widgets gain focus, and provides smooth visual debugging feedback:
+
+  - Refactored widget architecture - Replaced FocusableActionDetector with explicit composition of Actions, Shortcuts, and Focus widgets for better control over focus management and key event propagation.
+
+  - Fixed event handling - Changed _handleKeyEvent to return KeyEventResult.ignored instead of KeyEventResult.handled, allowing key events to properly bubble up from focused child widgets while still capturing them in the callback.
+
+  - Improved visual debug UX - Added clearSnackBars() before showing new SnackBar messages to prevent queuing and provide immediate visual feedback when rapidly pressing keys.
+
+Result: The 
+
 ## 1.0.1
 
 * `RoleFocusNode` class added: FocusNode with a stable role identifier preserved in release builds.
