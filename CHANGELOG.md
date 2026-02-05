@@ -1,3 +1,7 @@
+## 1.1.1 
+
+* CHANGELOG and README updated
+
 ## 1.1.0
 
 * KeystrokeListener now maintains keyboard event detection even when child widgets gain focus, and provides smooth visual debugging feedback:
@@ -8,7 +12,6 @@
 
   - Improved visual debug UX - Added clearSnackBars() before showing new SnackBar messages to prevent queuing and provide immediate visual feedback when rapidly pressing keys.
 
-Result: The 
 
 ## 1.0.1
 
