@@ -1,3 +1,10 @@
+## 1.1.2
+
+* fix: The button/widget briefly gets focus (allowing the click to work properly)
+After the frame completes, the KeystrokeListener automatically reclaims focus
+Keyboard listening continues uninterrupted
+
+
 ## 1.1.1 
 
 * CHANGELOG and README updated
