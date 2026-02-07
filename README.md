@@ -23,7 +23,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  keystroke_listener: ^1.1.2
+  keystroke_listener: ^2.0.0
 ```
 
 Then run:
