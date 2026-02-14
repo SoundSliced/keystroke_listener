@@ -23,7 +23,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  keystroke_listener: ^2.0.0
+  keystroke_listener: ^2.1.0
 ```
 
 Then run:
@@ -237,6 +237,7 @@ KeystrokeListener({
   FocusNode? focusNode,
   bool requestFocusOnInit = true,
   bool autoFocus = true,
+  Map<Type, void Function()>? actionHandlers,
   Key? key,
 })
 ```
@@ -247,6 +248,7 @@ KeystrokeListener({
 - **focusNode**: Custom FocusNode for advanced focus management
 - **requestFocusOnInit**: Request focus when the widget initializes
 - **autoFocus**: Set autofocus on the FocusableActionDetector
+- **actionHandlers**: Map of intent types to custom callback handlers for customizable actions per intent type
 
 ## Platform-Specific Notes
 
